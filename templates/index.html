@@ -5,53 +5,151 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediBook - Hospital Appointment System</title>
     <link rel="stylesheet" href="/static/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav>
-        <a href="/" class="logo">MediBook</a>
-        <ul class="nav-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+        <a href="/" class="logo">MediBook<span>.</span></a>
+        
+        <!-- Mobile hamburger toggle button -->
+        <button class="mobile-nav-toggle" onclick="toggleMobileNav()">☰</button>
+
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#features">Why Choose Us</a></li>
+            <li><a href="#contact">Contact</a></li>
             <li><a href="/login" class="btn-login">Login</a></li>
         </ul>
     </nav>
 
-    <header class="hero">
+    <!-- Main Hero -->
+    <header class="hero animated">
         <div class="hero-content">
-            <h1>Expert Healthcare, <br>Just a Click Away.</h1>
-            <p>Book appointments with the best doctors in your area. Quick, easy, and secure healthcare management for you and your family.</p>
-            <div style="display: flex; gap: 1rem;">
-                <a href="/register" class="btn-primary" style="text-decoration: none; text-align: center; width: auto; padding: 1rem 2rem;">Get Started</a>
-                <a href="/about" class="btn-primary" style="background: white; color: var(--secondary-color); border: 2px solid var(--secondary-color); text-decoration: none; text-align: center; width: auto; padding: 1rem 2rem;">Learn More</a>
+            <h1 class="animated">Expert Healthcare, <br><span>Just a Click Away.</span></h1>
+            <p class="animated">Book appointments with the best doctors in your area. Quick, easy, and secure healthcare management for you and your family.</p>
+            <div style="display: flex; gap: 1.25rem; flex-wrap: wrap;" class="animated">
+                <a href="/register" class="btn-primary">Get Started Today</a>
+                <a href="#about" class="btn-outline">Learn More</a>
             </div>
         </div>
         <div class="hero-image">
-            <img src="https://img.freepik.com/free-vector/doctors-concept-illustration_114360-1515.jpg" alt="Hospital Illustration" style="max-width: 500px;">
+            <img src="https://img.freepik.com/free-vector/doctors-concept-illustration_114360-1515.jpg" alt="MediBook Doctors Illustration">
         </div>
     </header>
 
-    <section style="padding: 5rem 5%; text-align: center;">
-        <h2 style="margin-bottom: 3rem; color: var(--primary-color);">Why Choose MediBook?</h2>
-        <div class="dashboard-grid">
+    <!-- Why Choose Us -->
+    <section id="features" style="padding: 6rem 8% 5rem; text-align: center; background-color: var(--bg-card);" class="animated">
+        <h2 style="margin-bottom: 1rem; font-size: 2.5rem;">Why Choose MediBook?</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 4rem; font-size: 1.1rem;">
+            Designed to bridge the gap between patients and healthcare professionals with simple, modern, and secure booking toolsets.
+        </p>
+        
+        <div class="dashboard-grid" style="padding: 0; margin-bottom: 2rem;">
             <div class="card">
-                <h3>Easy Booking</h3>
-                <p>Choose your preferred doctor and time slot in seconds.</p>
+                <!-- Easy Booking Icon (Calendar) -->
+                <div style="background-color: var(--pastel-blue); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </div>
+                <h3 style="margin-bottom: 0.75rem; font-size: 1.35rem;">Easy Booking</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Choose your preferred doctor and reserve an available time slot in just a few clicks.</p>
             </div>
+            
             <div class="card">
-                <h3>Best Doctors</h3>
-                <p>Verified professionals across all specializations.</p>
+                <!-- Best Doctors Icon (User Shield) -->
+                <div style="background-color: var(--pastel-blue); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <h3 style="margin-bottom: 0.75rem; font-size: 1.35rem;">Best Doctors</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Verified professional specialists across various departments ready to assist you.</p>
             </div>
+            
             <div class="card">
-                <h3>History & Tracking</h3>
-                <p>Keep track of all your medical appointments in one place.</p>
+                <!-- History Icon (Activity) -->
+                <div style="background-color: var(--pastel-blue); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                </div>
+                <h3 style="margin-bottom: 0.75rem; font-size: 1.35rem;">History & Tracking</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Review upcoming, completed, or cancelled appointments directly from your dashboard.</p>
             </div>
         </div>
     </section>
 
+    <!-- About Section -->
+    <section id="about" style="padding: 6rem 8%; background-color: var(--bg-light);" class="animated">
+        <div style="display: flex; gap: 4rem; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+                <img src="https://img.freepik.com/free-vector/health-professional-team-concept-illustration_114360-1608.jpg" alt="Healthcare Team" style="width: 100%; border-radius: var(--border-radius); box-shadow: var(--shadow-md);">
+            </div>
+            <div style="flex: 1.2; min-width: 300px;">
+                <h4 style="color: var(--secondary); text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; margin-bottom: 0.5rem; font-weight: 700;">About MediBook</h4>
+                <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem; line-height: 1.25;">Providing Trustworthy Health Services For Everyone</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 1.05rem;">
+                    MediBook is built to remove the hurdles in traditional hospital scheduling. By offering digital dashboards for both patients and healthcare providers, we make scheduling faster, double-booking impossible, and daily scheduling simple.
+                </p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+                    <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                        <span style="color: var(--success); font-size: 1.25rem; font-weight: bold;">✓</span>
+                        <div>
+                            <h5 style="font-size: 1.05rem; margin-bottom: 0.25rem;">Secure Session Keys</h5>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Protected by HttpOnly JWT cookies.</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                        <span style="color: var(--success); font-size: 1.25rem; font-weight: bold;">✓</span>
+                        <div>
+                            <h5 style="font-size: 1.05rem; margin-bottom: 0.25rem;">Smart Filters</h5>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Quickly isolate doctor availabilities.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" style="padding: 6rem 8% 5rem; text-align: center; background-color: var(--bg-card);" class="animated">
+        <h2 style="margin-bottom: 1rem; font-size: 2.5rem;">Get in Touch</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 3rem; font-size: 1.1rem;">
+            Have questions about our scheduling tool? Drop us a message below or visit our local clinics.
+        </p>
+        
+        <div style="max-width: 650px; margin: 0 auto; background: var(--bg-light); padding: 3rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); text-align: left; box-shadow: var(--shadow-sm);">
+            <form onsubmit="event.preventDefault(); alert('Message sent successfully!'); this.reset();">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Your Name</label>
+                        <input type="text" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Email ID</label>
+                        <input type="email" required placeholder="john@example.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Message Subject</label>
+                    <input type="text" required placeholder="Feedback on Booking System">
+                </div>
+                <div class="form-group">
+                    <label>How can we help?</label>
+                    <textarea rows="4" required style="width: 100%; border: 1.5px solid var(--border-color); border-radius: 10px; padding: 0.85rem 1.15rem; background-color: var(--bg-light); resize: vertical;" placeholder="Type your message here..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="width: auto; padding: 0.9rem 2.5rem;">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2026 MediBook Hospital. All rights reserved.</p>
+        <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 1.5rem; font-family: var(--font-title);">MediBook<span>.</span></h3>
+        <p style="margin-bottom: 2rem;">Connecting patients with premium clinical expertise effortlessly.</p>
+        <p>&copy; 2026 MediBook Hospital System. All rights reserved.</p>
     </footer>
+
+    <script>
+        function toggleMobileNav() {
+            const nav = document.getElementById('navLinks');
+            nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+        }
+    </script>
 </body>
 </html>

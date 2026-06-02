@@ -33,7 +33,14 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 def get_current_user(request: Request, db: Session = Depends(database.get_db)):
     token = request.cookies.get("access_token")
-    if not token or not token.startswith("Bearer "):
+    if not token:
+        return None
+    
+    # Strip surrounding quotes if present
+    if token.startswith('"') and token.endswith('"'):
+        token = token[1:-1]
+        
+    if not token.startswith("Bearer "):
         return None
     
     token = token.split(" ")[1]

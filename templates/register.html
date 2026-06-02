@@ -6,167 +6,210 @@
     <title>Register - MediBook</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: radial-gradient(circle at 90% 10%, #e0f2fe 0%, #ffffff 50%, #f1f5f9 100%);">
     <nav>
-        <a href="/" class="logo">MediBook</a>
+        <a href="/" class="logo">MediBook<span>.</span></a>
     </nav>
 
-    <div class="form-container">
-        <h2 class="form-title">Create Account</h2>
-        
-        <div class="role-toggle">
-            <button type="button" id="patientBtn" class="role-btn active" onclick="switchRole('patient')">Patient</button>
-            <button type="button" id="doctorBtn" class="role-btn" onclick="switchRole('doctor')">Doctor</button>
+    <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem 5%;">
+        <div class="form-container animated" style="margin: 0; width: 100%; max-width: 650px; box-shadow: var(--shadow-xl);">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="background-color: var(--pastel-blue); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                </div>
+                <h2 class="form-title" style="margin-bottom: 0.5rem; font-size: 2rem;">Create Account</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Join MediBook to streamline your medical consultations.</p>
+            </div>
+            
+            <!-- Custom Segmented Tab Toggle -->
+            <div class="role-toggle">
+                <button type="button" id="patientBtn" class="role-btn active" onclick="switchRole('patient')">Patient Portal</button>
+                <button type="button" id="doctorBtn" class="role-btn" onclick="switchRole('doctor')">Doctor Portal</button>
+            </div>
+    
+            <!-- Patient Form -->
+            <form id="patientForm" action="/api/register/patient" method="POST" class="animated">
+                <div style="display: grid; grid-template-columns: 1fr; gap: 1.25rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Full Name</label>
+                        <input type="text" name="full_name" required placeholder="John Doe">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Gender</label>
+                            <select name="gender" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Age</label>
+                            <input type="number" name="age" required placeholder="25">
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Blood Group</label>
+                            <select name="blood_group" required>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Phone Number</label>
+                            <input type="tel" name="phone" required placeholder="123-456-7890">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Email ID</label>
+                        <input type="email" name="email" required placeholder="john@example.com">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Password</label>
+                            <input type="password" name="password" required placeholder="••••••••">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Confirm Password</label>
+                            <input type="password" name="confirm_password" required placeholder="••••••••">
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.25rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Security Question</label>
+                            <select name="security_question" required>
+                                <option value="nickname">What is your childhood nickname?</option>
+                                <option value="school">What was your first school name?</option>
+                                <option value="food">What is your favorite food?</option>
+                                <option value="pet">What is your pet’s name?</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Security Answer</label>
+                            <input type="text" name="security_answer" required placeholder="Your answer">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="margin-top: 2rem; padding: 0.9rem;">Register as Patient</button>
+            </form>
+    
+            <!-- Doctor Form (Hidden by default) -->
+            <form id="doctorForm" action="/api/register/doctor" method="POST" enctype="multipart/form-data" style="display: none;" class="animated">
+                <div style="display: grid; grid-template-columns: 1fr; gap: 1.25rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Full Name</label>
+                        <input type="text" name="full_name" required placeholder="Dr. Sarah Jenkins">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Gender</label>
+                            <select name="gender" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Doctor ID</label>
+                            <input type="text" name="doctor_id" required placeholder="DOC123">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Specialization</label>
+                        <select name="specialization" required>
+                            <option value="Cardiologist">Cardiologist</option>
+                            <option value="Dermatologist">Dermatologist</option>
+                            <option value="Neurologist">Neurologist</option>
+                            <option value="Orthopedic">Orthopedic</option>
+                            <option value="Pediatrician">Pediatrician</option>
+                            <option value="ENT">ENT</option>
+                            <option value="Gynecologist">Gynecologist</option>
+                            <option value="General Physician">General Physician</option>
+                        </select>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Experience (Years)</label>
+                            <input type="number" name="experience" required placeholder="8">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Qualification</label>
+                            <input type="text" name="qualification" required placeholder="MBBS, MD">
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Phone Number</label>
+                            <input type="tel" name="phone" required placeholder="123-456-7890">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Email ID</label>
+                            <input type="email" name="email" required placeholder="sarah@medibook.com">
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Password</label>
+                            <input type="password" name="password" required placeholder="••••••••">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Confirm Password</label>
+                            <input type="password" name="confirm_password" required placeholder="••••••••">
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.25rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Security Question</label>
+                            <select name="security_question" required>
+                                <option value="nickname">What is your childhood nickname?</option>
+                                <option value="school">What was your first school name?</option>
+                                <option value="food">What is your favorite food?</option>
+                                <option value="mother">What is your mother’s maiden name?</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Security Answer</label>
+                            <input type="text" name="security_answer" required placeholder="Your answer">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Profile Image (Optional)</label>
+                        <input type="file" name="profile_image" accept="image/*" style="padding: 0.5rem;">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="margin-top: 2rem; padding: 0.9rem;">Register as Doctor</button>
+            </form>
+    
+            <p style="text-align: center; margin-top: 2rem; font-size: 0.95rem; color: var(--text-muted);">
+                Already have an account? <a href="/login" style="color: var(--secondary-hover); text-decoration: none; font-weight: 700; transition: var(--transition);">Login Here</a>
+            </p>
         </div>
-
-        <!-- Patient Form -->
-        <form id="patientForm" action="/api/register/patient" method="POST">
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" name="full_name" required placeholder="John Doe">
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div class="form-group">
-                    <label>Gender</label>
-                    <select name="gender" required>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Age</label>
-                    <input type="number" name="age" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Blood Group</label>
-                <select name="blood_group" required>
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Phone Number</label>
-                <input type="tel" name="phone" required>
-            </div>
-            <div class="form-group">
-                <label>Email ID</label>
-                <input type="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" required>
-            </div>
-            <div class="form-group">
-                <label>Confirm Password</label>
-                <input type="password" name="confirm_password" required>
-            </div>
-            <div class="form-group">
-                <label>Security Question</label>
-                <select name="security_question" required>
-                    <option value="nickname">What is your childhood nickname?</option>
-                    <option value="school">What was your first school name?</option>
-                    <option value="food">What is your favorite food?</option>
-                    <option value="pet">What is your pet’s name?</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Security Answer</label>
-                <input type="text" name="security_answer" required>
-            </div>
-            <button type="submit" class="btn-primary">Register as Patient</button>
-        </form>
-
-        <!-- Doctor Form (Hidden by default) -->
-        <form id="doctorForm" action="/api/register/doctor" method="POST" enctype="multipart/form-data" style="display: none;">
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" name="full_name" required>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div class="form-group">
-                    <label>Gender</label>
-                    <select name="gender" required>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Doctor ID</label>
-                    <input type="text" name="doctor_id" required placeholder="DOC123">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Specialization</label>
-                <select name="specialization" required>
-                    <option value="Cardiologist">Cardiologist</option>
-                    <option value="Dermatologist">Dermatologist</option>
-                    <option value="Neurologist">Neurologist</option>
-                    <option value="Orthopedic">Orthopedic</option>
-                    <option value="Pediatrician">Pediatrician</option>
-                    <option value="ENT">ENT</option>
-                    <option value="Gynecologist">Gynecologist</option>
-                    <option value="General Physician">General Physician</option>
-                </select>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div class="form-group">
-                    <label>Experience (Years)</label>
-                    <input type="number" name="experience" required>
-                </div>
-                <div class="form-group">
-                    <label>Qualification</label>
-                    <input type="text" name="qualification" required placeholder="MBBS, MD">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Phone Number</label>
-                <input type="tel" name="phone" required>
-            </div>
-            <div class="form-group">
-                <label>Email ID</label>
-                <input type="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" required>
-            </div>
-            <div class="form-group">
-                <label>Confirm Password</label>
-                <input type="password" name="confirm_password" required>
-            </div>
-            <div class="form-group">
-                <label>Security Question</label>
-                <select name="security_question" required>
-                    <option value="nickname">What is your childhood nickname?</option>
-                    <option value="school">What was your first school name?</option>
-                    <option value="food">What is your favorite food?</option>
-                    <option value="mother">What is your mother’s maiden name?</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Security Answer</label>
-                <input type="text" name="security_answer" required>
-            </div>
-            <div class="form-group">
-                <label>Profile Image (Optional)</label>
-                <input type="file" name="profile_image" accept="image/*">
-            </div>
-            <button type="submit" class="btn-primary">Register as Doctor</button>
-        </form>
-
-        <p style="text-align: center; margin-top: 1.5rem;">
-            Already have an account? <a href="/login" style="color: var(--secondary-color); text-decoration: none;">Login Here</a>
-        </p>
     </div>
+
+    <footer style="padding: 2rem 5%; background-color: var(--primary);">
+        <p style="font-size: 0.85rem; color: var(--text-light); text-align: center;">&copy; 2026 MediBook Hospital. All rights reserved.</p>
+    </footer>
 
     <script>
         function switchRole(role) {
@@ -174,7 +217,7 @@
             const doctorForm = document.getElementById('doctorForm');
             const patientBtn = document.getElementById('patientBtn');
             const doctorBtn = document.getElementById('doctorBtn');
-
+ 
             if (role === 'patient') {
                 patientForm.style.display = 'block';
                 doctorForm.style.display = 'none';

@@ -37,14 +37,21 @@ async def register_page(request: Request):
 async def forgot_password_page(request: Request):
     return templates.TemplateResponse(request, "forgot_password.html")
 
+# Helper to get the user for UI routes, catching any credentials exception and returning None to trigger a redirect
+def get_current_user_ui(request: Request, db: Session = Depends(database.get_db)):
+    try:
+        return auth.get_current_user(request, db)
+    except HTTPException:
+        return None
+
 @app.get("/patient/dashboard", response_class=HTMLResponse)
-async def patient_dashboard(request: Request, user: models.User = Depends(auth.get_current_user)):
+async def patient_dashboard(request: Request, user: models.User = Depends(get_current_user_ui)):
     if not user or user.role != "patient":
         return RedirectResponse(url="/login")
     return templates.TemplateResponse(request, "patient_dashboard.html", {"user": user})
 
 @app.get("/doctor/dashboard", response_class=HTMLResponse)
-async def doctor_dashboard(request: Request, user: models.User = Depends(auth.get_current_user)):
+async def doctor_dashboard(request: Request, user: models.User = Depends(get_current_user_ui)):
     if not user or user.role != "doctor":
         return RedirectResponse(url="/login")
     return templates.TemplateResponse(request, "doctor_dashboard.html", {"user": user})
@@ -262,6 +269,8 @@ async def get_me(user: models.User = Depends(auth.get_current_user)):
         data["specialization"] = profile.specialization
         data["experience"] = profile.experience
         data["qualification"] = profile.qualification
+        data["gender"] = profile.gender
+        data["profile_image"] = profile.profile_image
     return data
 
 @app.get("/api/doctors")
@@ -433,4 +442,16 @@ async def delete_availability(id: int, user: models.User = Depends(auth.get_curr
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    import webbrowser
+    import threading
+    import os
+
+    def open_browser():
+        webbrowser.open("http://127.0.0.1:8000")
+
+    # Only open browser on initial launch, not on reload restarts
+    if os.environ.get("BROWSER_OPENED") != "true":
+        os.environ["BROWSER_OPENED"] = "true"
+        threading.Timer(1.5, open_browser).start()
+
+    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)

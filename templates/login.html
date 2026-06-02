@@ -6,37 +6,49 @@
     <title>Login - MediBook</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: radial-gradient(circle at 10% 10%, #e0f2fe 0%, #ffffff 50%, #f1f5f9 100%);">
     <nav>
-        <a href="/" class="logo">MediBook</a>
+        <a href="/" class="logo">MediBook<span>.</span></a>
     </nav>
 
-    <div class="form-container">
-        <h2 class="form-title">Welcome Back</h2>
-        
-        <form action="/api/login" method="POST">
-            <div class="form-group">
-                <label>Email ID</label>
-                <input type="email" name="email" required placeholder="name@example.com">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" required placeholder="••••••••">
+    <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 5%;">
+        <div class="form-container animated" style="margin: 0; width: 100%; max-width: 480px; box-shadow: var(--shadow-xl);">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="background-color: var(--pastel-blue); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <h2 class="form-title" style="margin-bottom: 0.5rem; font-size: 2rem;">Welcome Back</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Access your dashboard and manage schedules.</p>
             </div>
             
-            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; font-size: 0.9rem;">
-                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 400;">
-                    <input type="checkbox" style="width: auto;"> Remember me
-                </label>
-                <a href="/forgot-password" style="color: var(--secondary-color); text-decoration: none;">Forgot Password?</a>
-            </div>
-
-            <button type="submit" class="btn-primary">Login</button>
-        </form>
-
-        <p style="text-align: center; margin-top: 1.5rem;">
-            Not Registered? <a href="/register" style="color: var(--secondary-color); text-decoration: none;">Create Account</a>
-        </p>
+            <form action="/api/login" method="POST">
+                <div class="form-group">
+                    <label>Email ID</label>
+                    <input type="email" name="email" required placeholder="name@example.com">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label>Password</label>
+                    <input type="password" name="password" required placeholder="••••••••">
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; font-size: 0.88rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 500; color: var(--text-main); cursor: pointer;">
+                        <input type="checkbox" style="width: auto; cursor: pointer; accent-color: var(--secondary);"> Remember me
+                    </label>
+                    <a href="/forgot-password" style="color: var(--secondary-hover); text-decoration: none; font-weight: 600; transition: var(--transition);">Forgot Password?</a>
+                </div>
+    
+                <button type="submit" class="btn-primary" style="padding: 0.9rem;">Sign In</button>
+            </form>
+    
+            <p style="text-align: center; margin-top: 2rem; font-size: 0.95rem; color: var(--text-muted);">
+                Don't have an account? <a href="/register" style="color: var(--secondary-hover); text-decoration: none; font-weight: 700; transition: var(--transition);">Create Account</a>
+            </p>
+        </div>
     </div>
+
+    <footer style="padding: 2rem 5%; background-color: var(--primary);">
+        <p style="font-size: 0.85rem; color: var(--text-light); text-align: center;">&copy; 2026 MediBook Hospital. All rights reserved.</p>
+    </footer>
 </body>
 </html>
