@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard - MediBook</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .sidebar {
+            width: 250px;
+            background: var(--white);
+            height: 100vh;
+            position: fixed;
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem 5%;
+        }
+        .sidebar-links {
+            list-style: none;
+            margin-top: 2rem;
+        }
+        .sidebar-links li {
+            margin-bottom: 1rem;
+        }
+        .sidebar-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            display: block;
+            padding: 0.8rem;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .sidebar-links a:hover, .sidebar-links a.active {
+            background: var(--pastel-blue);
+            color: var(--secondary-color);
+        }
+        .search-bar {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 12px;
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-soft);
+        }
+        .doctor-card {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-soft);
+        }
+        .doctor-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--pastel-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="/" class="logo">MediBook</a>
+        <ul class="sidebar-links">
+            <li><a href="#" class="active" onclick="showSection('search')">Search Doctors</a></li>
+            <li><a href="#" onclick="showSection('appointments')">My Appointments</a></li>
+            <li><a href="#" onclick="showSection('profile')">Profile Settings</a></li>
+            <li><a href="/logout" style="color: #e74c3c;">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <!-- New Patient Profile Bar -->
+        <div class="patient-profile-bar">
+            <img id="patientAvatar" src="" class="patient-avatar" onerror="this.src='/static/img/male_patient.png'">
+            <div class="welcome-info">
+                <h2>Welcome, <span id="patientNameHeader">...</span></h2>
+                <p id="patientDetails">Age: ... | Gender: ...</p>
+            </div>
+            <div style="margin-left: auto; color: var(--text-muted);" id="currentTime"></div>
+        </div>
+
+        <!-- Start Booking Button -->
+        <div id="startBookingContainer" style="text-align: center; padding: 3rem 0;">
+            <button class="btn-primary start-booking-btn" onclick="toggleSearchSection()">Start Booking Now</button>
+        </div>
+
+        <!-- Search Doctors Section (Initially Hidden) -->
+        <section id="searchSection" style="display: none;">
+            <div class="search-bar">
+                <input type="text" id="doctorSearch" placeholder="Search by name or specialization..." style="flex: 1; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                <select id="specializationFilter" style="padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;">
+                    <option value="">All Specializations</option>
+                    <option value="Cardiologist">Cardiologist</option>
+                    <option value="Dermatologist">Dermatologist</option>
+                    <option value="Neurologist">Neurologist</option>
+                    <option value="Orthopedic">Orthopedic</option>
+                    <option value="Pediatrician">Pediatrician</option>
+                    <option value="ENT">ENT</option>
+                    <option value="Gynecologist">Gynecologist</option>
+                    <option value="General Physician">General Physician</option>
+                </select>
+                <button class="btn-primary" style="width: auto; padding: 0 2rem;" onclick="loadDoctors()">Search</button>
+            </div>
+
+            <div id="doctorsList">
+                <!-- Doctor cards will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Appointments Section -->
+        <section id="appointmentsSection" style="display: none;">
+            <h3>My Appointment History</h3>
+            <div id="appointmentsList" style="margin-top: 1.5rem;">
+                <!-- Appointments will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profileSection" style="display: none;">
+            <h3>Edit Profile</h3>
+            <div class="form-container" style="margin: 2rem 0; max-width: 600px;">
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="profName" name="full_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" id="profAge" name="age" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="profPhone" name="phone" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Update Profile</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center;">
+        <div class="card" style="margin:0; width: 500px; max-height: 90vh; overflow-y: auto;">
+            <h3 id="modalDoctorName">Book Appointment</h3>
+            <p id="modalDocSpec" style="color:var(--text-muted); margin-bottom:1.5rem;"></p>
+            
+            <div class="form-group">
+                <label>Choose a Date</label>
+                <div id="dateBubbles" class="bubble-grid">
+                    <!-- Date bubbles loaded here -->
+                </div>
+            </div>
+
+            <div class="form-group" id="slotGroup" style="display:none;">
+                <label>Select Time Slot (15 mins each)</label>
+                <div id="slotBubbles" class="bubble-grid">
+                    <!-- Slot bubbles loaded here -->
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button class="btn-primary" onclick="confirmBooking()">Confirm Booking</button>
+                <button class="btn-primary" style="background:#eee; color:#333;" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Popup Modal -->
+    <div id="successModal">
+        <div class="modal-content">
+            <div class="success-icon">✓</div>
+            <h2>Appointment Booked!</h2>
+            <p style="margin: 1rem 0; color: var(--text-muted);">Your appointment has been scheduled successfully.</p>
+            <button class="btn-primary" onclick="dismissSuccess()">OK</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedDoctorId = null;
+        let selectedDate = null;
+        let selectedSlot = null;
+
+        async function init() {
+            const res = await fetch('/api/user/me');
+            const user = await res.json();
+            
+            // Set header info
+            document.getElementById('patientNameHeader').innerText = user.full_name;
+            document.getElementById('patientDetails').innerText = `Age: ${user.age || 'N/A'} | Gender: ${user.gender || 'N/A'}`;
+            
+            // Set avatar based on gender
+            const avatar = document.getElementById('patientAvatar');
+            if (user.gender && user.gender.toLowerCase() === 'female') {
+                avatar.src = '/static/img/female_patient.png';
+            } else {
+                avatar.src = '/static/img/male_patient.png';
+            }
+            
+            // Fill profile form
+            document.getElementById('profName').value = user.full_name;
+            document.getElementById('profAge').value = user.age || '';
+            document.getElementById('profPhone').value = user.phone || '';
+            
+            updateTime();
+            setInterval(updateTime, 1000);
+        }
+
+        function toggleSearchSection() {
+            document.getElementById('startBookingContainer').style.display = 'none';
+            document.getElementById('searchSection').style.display = 'block';
+            loadDoctors();
+        }
+
+        function updateTime() {
+            document.getElementById('currentTime').innerText = new Date().toLocaleString();
+        }
+
+        async function loadDoctors() {
+            const query = document.getElementById('doctorSearch').value;
+            const spec = document.getElementById('specializationFilter').value;
+            const res = await fetch(`/api/doctors?query=${query}&specialization=${spec}`);
+            const doctors = await res.json();
+            const list = document.getElementById('doctorsList');
+            
+            if (doctors.length === 0) {
+                list.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 3rem;">
+                        <h3 style="color: var(--text-muted);">No doctor available</h3>
+                        <p>Try searching for a different name or specialization.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = '';
+            doctors.forEach(doc => {
+                list.innerHTML += `
+                    <div class="doctor-card">
+                        <img src="/static/${doc.profile_image}" class="doctor-img" onerror="this.src='/static/img/male_avatar.png'">
+                        <div style="flex: 1;">
+                            <h4>Dr. ${doc.full_name}</h4>
+                            <p style="color: var(--secondary-color); font-weight: 500;">${doc.specialization}</p>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">${doc.experience} Years Experience | ${doc.qualification}</p>
+                        </div>
+                        <button class="btn-primary" style="width: auto; padding: 0.6rem 1.5rem;" onclick="openBookingModal(${doc.id}, '${doc.full_name}', '${doc.specialization}')">Book Now</button>
+                    </div>
+                `;
+            });
+        }
+
+        function showSection(id) {
+            ['search', 'appointments', 'profile'].forEach(s => {
+                const el = document.getElementById(s + 'Section');
+                if (el) el.style.display = s === id ? 'block' : 'none';
+            });
+            
+            // Special handling for search section toggle
+            if (id === 'search') {
+                document.getElementById('startBookingContainer').style.display = 'block';
+                document.getElementById('searchSection').style.display = 'none';
+            } else {
+                document.getElementById('startBookingContainer').style.display = 'none';
+            }
+
+            document.querySelectorAll('.sidebar-links a').forEach(a => a.classList.remove('active'));
+            if (event && event.target) event.target.classList.add('active');
+            if (id === 'appointments') loadAppointments();
+        }
+
+        function closeModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+
+        async function openBookingModal(id, name, spec) {
+            selectedDoctorId = id;
+            selectedDate = null;
+            selectedSlot = null;
+            document.getElementById('modalDoctorName').innerText = `Dr. ${name}`;
+            document.getElementById('modalDocSpec').innerText = spec;
+            document.getElementById('bookingModal').style.display = 'flex';
+            document.getElementById('slotGroup').style.display = 'none';
+            
+            // Load available dates
+            const res = await fetch(`/api/doctor/${id}/available-dates`);
+            const dates = await res.json();
+            
+            const container = document.getElementById('dateBubbles');
+            container.innerHTML = dates.length ? '' : '<p>No dates available.</p>';
+            
+            dates.forEach(date => {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.innerText = date;
+                bubble.onclick = () => selectDate(date, bubble);
+                container.appendChild(bubble);
+            });
+        }
+
+        function selectDate(date, element) {
+            selectedDate = date;
+            document.querySelectorAll('#dateBubbles .bubble').forEach(b => b.classList.remove('selected'));
+            element.classList.add('selected');
+            loadSlots(date);
+        }
+
+        async function loadSlots(date) {
+            const res = await fetch(`/api/doctor/${selectedDoctorId}/slots?date=${date}`);
+            const slots = await res.json();
+            
+            document.getElementById('slotGroup').style.display = 'block';
+            const container = document.getElementById('slotBubbles');
+            container.innerHTML = slots.length ? '' : '<p>No slots available for this date.</p>';
+            
+            slots.forEach(slot => {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.innerText = slot;
+                bubble.onclick = () => selectSlot(slot, bubble);
+                container.appendChild(bubble);
+            });
+        }
+
+        function selectSlot(slot, element) {
+            selectedSlot = slot;
+            document.querySelectorAll('#slotBubbles .bubble').forEach(b => b.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        async function confirmBooking() {
+            if (!selectedDate || !selectedSlot) return alert("Please select date and slot");
+
+            const res = await fetch('/api/appointments/book', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({doctor_id: selectedDoctorId, date: selectedDate, time_slot: selectedSlot})
+            });
+
+            if (res.ok) {
+                closeModal();
+                document.getElementById('successModal').style.display = 'flex';
+            } else {
+                const data = await res.json();
+                alert(data.detail || "Booking failed");
+            }
+        }
+
+        function dismissSuccess() {
+            document.getElementById('successModal').style.display = 'none';
+            showSection('appointments');
+        }
+
+        async function loadAppointments() {
+            const res = await fetch('/api/patient/appointments');
+            const appointments = await res.json();
+            const list = document.getElementById('appointmentsList');
+            list.innerHTML = appointments.length ? '' : '<p>No appointments found.</p>';
+
+            appointments.forEach(app => {
+                list.innerHTML += `
+                    <div class="card" style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="color: var(--secondary-color);">Dr. ${app.doctor_name}</h4>
+                            <p>${app.date} at ${app.time_slot}</p>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Status: <span style="color: ${app.status === 'scheduled' ? '#27ae60' : '#e74c3c'}">${app.status}</span></p>
+                        </div>
+                        ${app.status === 'scheduled' ? `<button onclick="cancelAppointment(${app.id})" style="background:none; border:none; color:#e74c3c; cursor:pointer; font-weight:600;">Cancel</button>` : ''}
+                    </div>
+                `;
+            });
+        }
+
+        async function cancelAppointment(id) {
+            if (!confirm("Are you sure you want to cancel this appointment?")) return;
+            const res = await fetch(`/api/appointments/${id}/cancel`, {method: 'POST'});
+            if (res.ok) loadAppointments();
+        }
+
+        init();
+    </script>
+</body>
+</html>

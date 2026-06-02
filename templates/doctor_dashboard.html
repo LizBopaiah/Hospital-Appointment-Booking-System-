@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - MediBook</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .sidebar {
+            width: 250px;
+            background: var(--white);
+            height: 100vh;
+            position: fixed;
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem 5%;
+        }
+        .sidebar-links {
+            list-style: none;
+            margin-top: 2rem;
+        }
+        .sidebar-links li {
+            margin-bottom: 1rem;
+        }
+        .sidebar-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            display: block;
+            padding: 0.8rem;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .sidebar-links a:hover, .sidebar-links a.active {
+            background: var(--pastel-blue);
+            color: var(--secondary-color);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-soft);
+            text-align: center;
+        }
+        .appointment-table {
+            width: 100%;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            border-collapse: collapse;
+        }
+        .appointment-table th, .appointment-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .appointment-table th {
+            background: var(--pastel-blue);
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="/" class="logo">MediBook</a>
+        <ul class="sidebar-links">
+            <li><a href="#" class="active" onclick="showSection('overview')">Overview</a></li>
+            <li><a href="#" onclick="showSection('appointments')">My Appointments</a></li>
+            <li><a href="#" onclick="showSection('availability')">Manage Schedule</a></li>
+            <li><a href="#" onclick="showSection('profile')">Profile Settings</a></li>
+            <li><a href="/logout" style="color: #e74c3c;">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2>Dr. <span id="doctorName">...</span></h2>
+            <div id="currentTime" style="color: var(--text-muted);"></div>
+        </header>
+
+        <!-- Overview Section -->
+        <section id="overviewSection">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="totalApps">0</h3>
+                    <p>Total Appointments</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="todayApps">0</h3>
+                    <p>Today's Appointments</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="pendingApps">0</h3>
+                    <p>Pending Requests</p>
+                </div>
+            </div>
+
+            <h3>Upcoming Appointments</h3>
+            <div style="margin-top: 1rem;">
+                <table class="appointment-table">
+                    <thead>
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Age</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="upcomingTableBody">
+                        <!-- Rows loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Appointments Section -->
+        <section id="appointmentsSection" style="display: none;">
+            <h3>All Appointments</h3>
+            <div style="margin-top: 1rem;">
+                <table class="appointment-table">
+                    <thead>
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="allTableBody">
+                        <!-- Rows loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Availability Section -->
+        <section id="availabilitySection" style="display: none;">
+            <h3>Manage My Schedule</h3>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Set your available hours for specific dates in the upcoming week.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="card">
+                    <h4>Add Availability</h4>
+                    <form id="availabilityForm" onsubmit="addAvailability(event)">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="availDate" required>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Start Time</label>
+                                <input type="time" id="availStart" required value="09:00">
+                            </div>
+                            <div class="form-group">
+                                <label>End Time</label>
+                                <input type="time" id="availEnd" required value="17:00">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">Add to Schedule</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h4>Current Schedule</h4>
+                    <div id="scheduleList" style="margin-top: 1rem;">
+                        <!-- Availabilities loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profileSection" style="display: none;">
+            <h3>Doctor Profile</h3>
+            <div class="form-container" style="margin: 2rem 0; max-width: 600px;">
+                <form id="docProfileForm">
+                    <div class="form-group">
+                        <label>Specialization</label>
+                        <input type="text" id="docSpec" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Years of Experience</label>
+                        <input type="number" id="docExp" name="experience">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="docPhone" name="phone">
+                    </div>
+                    <button type="submit" class="btn-primary">Update Profile</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        async function init() {
+            const res = await fetch('/api/user/me');
+            const user = await res.json();
+            document.getElementById('doctorName').innerText = user.full_name;
+            
+            // Profile data
+            document.getElementById('docSpec').value = user.specialization || 'N/A';
+            document.getElementById('docExp').value = user.experience || 0;
+            document.getElementById('docPhone').value = user.phone || '';
+
+            loadOverview();
+            updateTime();
+            setInterval(updateTime, 1000);
+        }
+
+        function updateTime() {
+            document.getElementById('currentTime').innerText = new Date().toLocaleString();
+        }
+
+        function showSection(id) {
+            ['overview', 'appointments', 'availability', 'profile'].forEach(s => {
+                document.getElementById(s + 'Section').style.display = s === id ? 'block' : 'none';
+            });
+            document.querySelectorAll('.sidebar-links a').forEach(a => a.classList.remove('active'));
+            if (event) event.target.classList.add('active');
+
+            if (id === 'appointments') loadAllAppointments();
+            if (id === 'availability') {
+                loadSchedule();
+                // Set date constraints
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('availDate').min = today;
+                const nextWeek = new Date();
+                nextWeek.setDate(nextWeek.getDate() + 7);
+                document.getElementById('availDate').max = nextWeek.toISOString().split('T')[0];
+            }
+        }
+
+        async function addAvailability(e) {
+            e.preventDefault();
+            const date = document.getElementById('availDate').value;
+            const start = document.getElementById('availStart').value;
+            const end = document.getElementById('availEnd').value;
+
+            const res = await fetch('/api/doctor/availability', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({date, start_time: start, end_time: end})
+            });
+
+            if (res.ok) {
+                alert("Schedule updated!");
+                loadSchedule();
+            } else {
+                alert("Failed to update schedule");
+            }
+        }
+
+        async function loadSchedule() {
+            const res = await fetch('/api/doctor/availability');
+            const schedule = await res.json();
+            const list = document.getElementById('scheduleList');
+            list.innerHTML = schedule.length ? '' : '<p>No availability set.</p>';
+
+            schedule.forEach(item => {
+                list.innerHTML += `
+                    <div style="padding: 1rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+                        <span><strong>${item.date}</strong>: ${item.start_time} - ${item.end_time}</span>
+                        <button onclick="deleteAvail(${item.id})" style="color: #e74c3c; border: none; background: none; cursor: pointer;">Delete</button>
+                    </div>
+                `;
+            });
+        }
+
+        async function deleteAvail(id) {
+            if (!confirm("Remove this slot?")) return;
+            await fetch(`/api/doctor/availability/${id}`, {method: 'DELETE'});
+            loadSchedule();
+        }
+
+        async function loadOverview() {
+            const res = await fetch('/api/doctor/appointments');
+            const appointments = await res.json();
+            
+            document.getElementById('totalApps').innerText = appointments.length;
+            const today = new Date().toISOString().split('T')[0];
+            const todayApps = appointments.filter(a => a.date === today);
+            document.getElementById('todayApps').innerText = todayApps.length;
+            
+            const table = document.getElementById('upcomingTableBody');
+            table.innerHTML = '';
+            
+            appointments.slice(0, 5).forEach(app => {
+                table.innerHTML += `
+                    <tr>
+                        <td>${app.patient_name}</td>
+                        <td>${app.patient_age}</td>
+                        <td>${app.date}</td>
+                        <td>${app.time_slot}</td>
+                        <td><span style="color: #27ae60">${app.status}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function loadAllAppointments() {
+            const res = await fetch('/api/doctor/appointments');
+            const appointments = await res.json();
+            const table = document.getElementById('allTableBody');
+            table.innerHTML = '';
+
+            appointments.forEach(app => {
+                table.innerHTML += `
+                    <tr>
+                        <td>${app.patient_name}</td>
+                        <td>${app.date}</td>
+                        <td>${app.time_slot}</td>
+                        <td>${app.status}</td>
+                        <td>
+                            ${app.status === 'scheduled' ? `<button onclick="cancelAppointment(${app.id})" style="color:#e74c3c; border:none; background:none; cursor:pointer;">Cancel</button>` : '-'}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function cancelAppointment(id) {
+            if (!confirm("Cancel this appointment?")) return;
+            const res = await fetch(`/api/appointments/${id}/cancel`, {method: 'POST'});
+            if (res.ok) loadAllAppointments();
+        }
+
+        init();
+    </script>
+</body>
+</html>
