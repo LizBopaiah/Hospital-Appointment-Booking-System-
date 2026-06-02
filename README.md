@@ -187,16 +187,3 @@ Here is a simple dictionary explaining the keywords used in this project:
 *   **SQLite**: A simple database system that stores all its tables and records in a single normal file on your hard drive, without requiring a separate database server.
 *   **Hashing**: A security process that takes a password and runs it through a mathematical formula to turn it into a scrambled string of letters. This process cannot be reversed, meaning even if hackers steal the database, they cannot view original passwords.
 
----
-
-## 9. Project Directory & Core Files
-
-To explore the codebase, click on the files below:
-
-*   [app.py](file:///c:/Users/laksh/workspace/workspace/Projects/hospital%20appointment%20booking/app.py): The main entry point containing all URL paths, backend logic, and API endpoints.
-*   [models.py](file:///c:/Users/laksh/workspace/workspace/Projects/hospital%20appointment%20booking/models.py): Contains the SQLite database tables representation (User, Doctor, Patient, Appointment, DoctorAvailability).
-*   [auth.py](file:///c:/Users/laksh/workspace/workspace/Projects/hospital%20appointment%20booking/auth.py): Implements security functions such as password hashing (`bcrypt`), JWT token generation, and login checks.
-*   [database.py](file:///c:/Users/laksh/workspace/workspace/Projects/hospital%20appointment%20booking/database.py): Establishes the connection to SQLite and manages sessions.
-*   [schemas.py](file:///c:/Users/laksh/workspace/workspace/Projects/hospital%20appointment%20booking/schemas.py): Defines the input-output data structures expected by FastAPI.
-*   [requirements.txt](file:///c:/Users/laksh/workspace/workspace/Projects/hospital%20appointment%20booking/requirements.txt): Lists the Python packages required to run the project.
-*   [deployment_guide.md](file:///c:/Users/laksh/workspace/workspace/Projects/hospital%20appointment%20booking/deployment_guide.md): Simple instructions on running and deploying the system.
